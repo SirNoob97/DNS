@@ -98,7 +98,7 @@ func dnsQuery(servers []net.IP, question dnsmessage.Question) (*dnsmessage.Messa
 			if additional.Header.Type == dnsmessage.TypeA {
 				for _, ns := range nameservers {
 					if additional.Header.Name.String() == ns {
-            newResolverServersFound = true
+						newResolverServersFound = true
 						servers = append(servers, additional.Body.(*dnsmessage.AResource).A[:])
 					}
 				}
@@ -164,7 +164,7 @@ func outgoingDnsQuery(servers []net.IP, question dnsmessage.Question) (*dnsmessa
 		}
 	}
 	if conn == nil {
-		return nil, nil, fmt.Errorf("Failed to stablish connectio with the servers: %s", err)
+		return nil, nil, fmt.Errorf("Failed to stablish connection with the servers: %s", err)
 	}
 
 	_, err = conn.Write(buff)
@@ -178,7 +178,11 @@ func outgoingDnsQuery(servers []net.IP, question dnsmessage.Question) (*dnsmessa
 		return nil, nil, err
 	}
 
-	conn.Close()
+	err = conn.Close()
+	if err != nil {
+		return nil, nil, err
+	}
+
 	p := dnsmessage.Parser{}
 	header, err := p.Start(answer[:n])
 	if conn == nil {
@@ -204,7 +208,12 @@ func outgoingDnsQuery(servers []net.IP, question dnsmessage.Question) (*dnsmessa
 func getRootServers() []net.IP {
 	rootServers := []net.IP{}
 	for _, rs := range strings.Split(ROOT_SERVERS, ",") {
-		rootServers = append(rootServers, net.ParseIP(rs))
+		ip := net.ParseIP(rs)
+		if ip != nil {
+			rootServers = append(rootServers, ip)
+		} else {
+			fmt.Printf("Error parsing IP address of: %s server\n", rs)
+		}
 	}
 	return rootServers
 }
