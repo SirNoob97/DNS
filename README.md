@@ -1,10 +1,22 @@
 # DNS
 
-DNS server written in Go
+DNS server project for learning purpouses
 
-# Goals
+# How to install?
 
-- Support for RFC 1034 and 1035
+Build/install the app using `go` cli tool or use Makefile
+
+Build the application: 
+
+```
+make
+```
+
+Or install the app:
+
+```
+make install
+```
 
 # Resources used
 
