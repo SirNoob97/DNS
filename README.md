@@ -1,6 +1,6 @@
 # DNS
 
-DNS server project for learning purpouses
+DNS server project for learning purposes.
 
 # How to install?
 
